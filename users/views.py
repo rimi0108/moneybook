@@ -51,9 +51,6 @@ class LoginView(View):
 
             user = User.objects.get(email=email)
 
-            if not User.objects.filter(email=email).exists():
-                return JsonResponse({"MESSAGE": "EMAIL DOESN'T EXIST"}, status=400)
-
             if not bcrypt.checkpw(
                 password.encode("utf-8"), user.password.encode("utf-8")
             ):
