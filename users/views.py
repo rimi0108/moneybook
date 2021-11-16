@@ -54,7 +54,7 @@ class LoginView(View):
             if not bcrypt.checkpw(
                 password.encode("utf-8"), user.password.encode("utf-8")
             ):
-                return JsonResponse({"message": "WRONG_PASSWORD"}, status=401)
+              return JsonResponse({"message": "WRONG_PASSWORD"}, status=401)
 
             access_token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
@@ -74,3 +74,4 @@ class LoginView(View):
 
         except User.MultipleObjectsReturned:
             return JsonResponse({"message": "MULTIPLE_OBJECTS_RETURNED"}, status=400)
+
