@@ -1,6 +1,9 @@
+import bcrypt, jwt
+
 from django.test import TestCase, Client
 
 from users.models import User
+from my_settings import SECRET_KEY, ALGORITHM
 
 
 class SignUpTest(TestCase):
