@@ -1,9 +1,8 @@
 import datetime
-from django.forms.fields import CharField
 
 import jwt, json
 
-from django.test import TestCase, Client, client
+from django.test import TestCase, Client
 from django.db.models import Sum
 
 from moneybooks.models import MoneyBook
