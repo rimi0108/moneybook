@@ -176,3 +176,14 @@ class DetailMoneyBookView(View):
 
         except json.decoder.JSONDecodeError:
             return JsonResponse({"message": "JSONDecodeError"}, status=400)
+
+    @log_in_confirm
+    def delete(self, request, moneybook_id):
+        user = request.user
+
+        if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+
+        MoneyBook.objects.get(user_id=user.id, id=moneybook_id).delete()
+
+        return JsonResponse({"message": "DELETE_SUCCESS"}, status=200)
