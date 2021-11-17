@@ -24,6 +24,7 @@ class MoneyBookView(View):
                 user_id=user.id,
                 amount=data["amount"],
                 date=data["date"],
+                type=data["type"],
                 property=data["property"],
                 category=data["category"],
                 memo=data["memo"],
@@ -102,6 +103,7 @@ class MoneyBookView(View):
             {
                 "amount": format(record.amount, ","),
                 "date": record.date,
+                "type": record.type,
                 "property": record.property,
                 "category": record.category,
                 "memo": record.memo,
