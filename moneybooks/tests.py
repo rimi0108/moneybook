@@ -10,7 +10,7 @@ from users.models import User
 from my_settings import SECRET_KEY, ALGORITHM
 
 
-class CreateMoneyBookTest(TestCase):
+class MoneyBookTest(TestCase):
     def setUp(self):
         user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
         self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
@@ -136,61 +136,6 @@ class CreateMoneyBookTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {"message": "KEY_ERROR"})
 
-
-class MoneyBookListTest(TestCase):
-    def setUp(self):
-        user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
-        self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
-
-        MoneyBook.objects.bulk_create(
-            [
-                MoneyBook(
-                    id=1,
-                    user_id=user.id,
-                    amount=10000,
-                    type="WITHDRAW",
-                    date="2021-09-16",
-                    property="현금",
-                    category="식비",
-                    memo="오늘도 돈 썼네..",
-                ),
-                MoneyBook(
-                    id=2,
-                    user_id=user.id,
-                    amount=10000,
-                    type="WITHDRAW",
-                    date="2021-10-16",
-                    property="현금",
-                    category="식비",
-                    memo="오늘도 돈 썼네..",
-                ),
-                MoneyBook(
-                    id=3,
-                    user_id=user.id,
-                    amount=10000,
-                    type="WITHDRAW",
-                    date="2021-11-16",
-                    property="현금",
-                    category="식비",
-                    memo="오늘도 돈 썼네..",
-                ),
-                MoneyBook(
-                    id=4,
-                    user_id=user.id,
-                    amount=10000,
-                    type="WITHDRAW",
-                    date="2021-11-17",
-                    property="현금",
-                    category="식비",
-                    memo="오늘도 돈 썼네..",
-                ),
-            ]
-        )
-
-    def tearDown(self):
-        User.objects.all().delete()
-        MoneyBook.objects.all().delete()
-
     def test_postview_get_success(self):
         client = Client()
 
@@ -243,7 +188,7 @@ class MoneyBookListTest(TestCase):
             {"total_price": total_price, "records": results},
         )
 
-    def test_postview_get_month_success(self):
+    def test_postview_month_filter_get_success(self):
         client = Client()
 
         header = {"HTTP_Authorization": self.token}
@@ -251,8 +196,6 @@ class MoneyBookListTest(TestCase):
 
         payload = jwt.decode(token, SECRET_KEY, ALGORITHM)
         user = User.objects.get(id=payload["id"])
-
-        now = datetime.datetime.now()
 
         all_records = MoneyBook.objects.filter(
             user_id=user.id, date__year=2021, date__month=10
@@ -293,4 +236,26 @@ class MoneyBookListTest(TestCase):
         self.assertEqual(
             response.json(),
             {"total_price": total_price, "records": results},
+        )
+
+    def test_detail_postview_get_success(self):
+        client = Client()
+
+        header = {"HTTP_Authorization": self.token}
+
+        record = {
+            "amount": "10,000.00",
+            "date": "2021-09-16",
+            "type": "WITHDRAW",
+            "property": "현금",
+            "category": "식비",
+            "memo": "오늘도 돈 썼네..",
+        }
+
+        response = client.get("/moneybook/1", **header)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"record": record},
         )
