@@ -11,7 +11,7 @@ class User(models.Model):
 
 class Token(models.Model):
     token = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
         db_table = "tokens"
