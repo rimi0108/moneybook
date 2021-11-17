@@ -52,7 +52,7 @@ class MoneyBookView(View):
         month = request.GET.get("month", None)
         day = request.GET.get("day", None)
 
-        # 들어온 쿼리에 따라 결과 list 필터링
+        # 들어온 쿼리 파라미터에 따라 결과 list 필터링
         if year != None and month != None and day != None:
             all_records = MoneyBook.objects.filter(
                 user_id=user.id, date__year=year, date__month=month, date__day=day
@@ -77,7 +77,7 @@ class MoneyBookView(View):
                 date__day=day,
             )
         else:
-            # 쿼리 들어오지 않았을 때 현재 날짜의 기록 반환
+            # 쿼리 파라미터 들어오지 않았을 때 현재 날짜의 기록 반환
             all_records = MoneyBook.objects.filter(
                 user_id=user.id, date=now.strftime("%Y-%m-%d")
             )
