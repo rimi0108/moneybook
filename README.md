@@ -4,7 +4,7 @@
 
 ## 💡 ERD
 
-<img width="780" alt="스크린샷 2021-11-17 오후 8 42 28" src="https://user-images.githubusercontent.com/73830753/142194366-8ae2e781-264f-48a6-b6ea-8d1e067cf84b.png">
+<img width="768" alt="스크린샷 2021-11-18 오전 1 01 43" src="https://user-images.githubusercontent.com/73830753/142235901-e9da394d-481a-4a0d-a095-7be4d0a0945a.png">
 
 ## 🛠 사용 기술 및 툴
 
@@ -20,6 +20,11 @@
 - 유저의 비밀번호를 db에 암호화하여 안전하게 저장하기 위해 `bcrypt`를 사용했습니다.
 - 유저가 로그인 시 token이 발급됩니다.
   - token 발급은 `jwt`를 사용하여 발급하였습니다.
+  - token은 로그아웃을 위해 발급시 db에 저장됩니다.
+- 유저 로그아웃 시 db에서 토큰을 삭제합니다.
+  - 서비스 이용시 삭제된 토큰인지 아닌지 판단한 후 삭제된 토큰일 시 유저는 서비스를 이용할 수 없습니다.
+  - 재로그인 시 다시 db에 토큰이 저장되므로 유저는 정상적으로 서비스를 이용할 수 있습니다.
+  - 🤔 [jwt 로그아웃에 대해 고민하며 쓴 글](https://rimi0108.github.io/django/jwt-logout/)
 
 ### moneybooks
 
