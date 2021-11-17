@@ -141,3 +141,38 @@ class DetailMoneyBookView(View):
         }
 
         return JsonResponse({"record": result}, status=200)
+
+    @log_in_confirm
+    def patch(self, request, moneybook_id):
+        try:
+            user = request.user
+
+            data = json.loads(request.body)
+
+            if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+                return JsonResponse({"message": "RECORD_NOT_FOUND"})
+
+            if len(str(data["amount"])) > 15:
+                return JsonResponse({"message": "TOO_MUCH_AMOUNT"}, status=400)
+
+            amount = data["amount"]
+            memo = data["memo"]
+            property = data["property"]
+            category = data["category"]
+            type = data["type"]
+
+            MoneyBook.objects.filter(user_id=user.id, id=moneybook_id).update(
+                memo=memo,
+                amount=amount,
+                property=property,
+                category=category,
+                type=type,
+            )
+
+            return JsonResponse({"message": "UPDATE_SUCCESS"}, status=200)
+
+        except KeyError:
+            return JsonResponse({"message": "KEY_ERROR"}, status=400)
+
+        except json.decoder.JSONDecodeError:
+            return JsonResponse({"message": "JSONDecodeError"}, status=400)
