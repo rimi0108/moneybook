@@ -9,7 +9,7 @@ from .models import MoneyBook
 from utils import log_in_confirm
 
 
-class UserMoneyBookView(View):
+class MoneyBookView(View):
     @log_in_confirm
     def post(self, request):
         try:
