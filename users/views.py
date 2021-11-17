@@ -4,7 +4,8 @@ from django.views import View
 from django.http import JsonResponse
 
 from my_settings import SECRET_KEY, ALGORITHM
-from .models import User
+from .models import User, Token
+from utils import log_in_confirm
 
 
 class SignupView(View):
@@ -57,6 +58,8 @@ class LoginView(View):
 
             access_token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
+            Token.objects.create(user_id=user.id, token=access_token)
+
             return JsonResponse(
                 {"message": "LOGIN_SUCCESS", "token": access_token},
                 status=200,
@@ -73,3 +76,13 @@ class LoginView(View):
 
         except User.MultipleObjectsReturned:
             return JsonResponse({"message": "MULTIPLE_OBJECTS_RETURNED"}, status=400)
+
+
+class LogoutView(View):
+    @log_in_confirm
+    def post(self, request):
+        user = request.user
+
+        Token.objects.get(user_id=user.id).delete()
+
+        return JsonResponse({"message": "LOGOUT_SUCCESS"}, status=200)

@@ -2,7 +2,7 @@ import jwt
 
 from django.http import JsonResponse
 
-from users.models import User
+from users.models import User, Token
 from my_settings import SECRET_KEY, ALGORITHM
 
 
@@ -15,6 +15,9 @@ def log_in_confirm(func):
 
             if not User.objects.filter(id=user["id"]).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
+
+            if not Token.objects.filter(user_id=user["id"]).exists():
+                return JsonResponse({"message": "INVALID_USER"})
 
             request.user = User.objects.get(id=user["id"])
 
