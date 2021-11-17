@@ -40,8 +40,6 @@ class UserMoneyBookView(View):
         except ValidationError:
             return JsonResponse({"message": "VALIDATION_ERROR"}, status=404)
 
-
-class MoneyBookView(View):
     @log_in_confirm
     def get(self, request):
         user = request.user
