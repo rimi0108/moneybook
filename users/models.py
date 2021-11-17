@@ -7,3 +7,11 @@ class User(models.Model):
 
     class Meta:
         db_table = "users"
+
+
+class Token(models.Model):
+    token = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "tokens"
