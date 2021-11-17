@@ -56,18 +56,22 @@ class MoneyBookView(View):
             all_records = MoneyBook.objects.filter(
                 user_id=user.id, date__year=year, date__month=month, date__day=day
             )
+
         elif year != None and month != None:
             all_records = MoneyBook.objects.filter(
                 user_id=user.id, date__year=year, date__month=month
             )
+
         elif year != None:
             all_records = MoneyBook.objects.filter(user_id=user.id, date__year=year)
+
         elif month != None:
             all_records = MoneyBook.objects.filter(
                 user_id=user.id,
                 date__year=now.strftime("%Y"),
                 date__month=month,
             )
+
         elif day != None:
             all_records = MoneyBook.objects.filter(
                 user_id=user.id,
@@ -75,6 +79,7 @@ class MoneyBookView(View):
                 date__month=now.strftime("%m"),
                 date__day=day,
             )
+
         else:
             # 쿼리 파라미터 들어오지 않았을 때 현재 날짜의 기록 반환
             all_records = MoneyBook.objects.filter(
@@ -114,3 +119,25 @@ class MoneyBookView(View):
         return JsonResponse(
             {"total_price": total_price, "records": results}, status=200
         )
+
+
+class DetailMoneyBookView(View):
+    @log_in_confirm
+    def get(self, request, moneybook_id):
+        user = request.user
+
+        if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+
+        record = MoneyBook.objects.get(id=moneybook_id, user_id=user.id)
+
+        result = {
+            "amount": format(record.amount, ","),
+            "date": record.date,
+            "type": record.type,
+            "property": record.property,
+            "category": record.category,
+            "memo": record.memo,
+        }
+
+        return JsonResponse({"record": result}, status=200)
