@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views import MoneyBookView
+from .views import UserMoneyBookView, MoneyBookView
 
 urlpatterns = [
-    path("moneybook", MoneyBookView.as_view()),
+    path("moneybook", UserMoneyBookView.as_view()),
+    path("moneybooks", MoneyBookView.as_view()),
 ]
