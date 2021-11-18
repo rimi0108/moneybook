@@ -140,7 +140,7 @@ class DetailMoneyBookView(View):
         if not MoneyBook.objects.filter(
             id=moneybook_id, user_id=user.id, is_deleted=False
         ).exists():
-            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+            return JsonResponse({"message": "RECORD_NOT_FOUND"}, status=400)
 
         record = MoneyBook.objects.get(
             id=moneybook_id, user_id=user.id, is_deleted=False
@@ -167,7 +167,7 @@ class DetailMoneyBookView(View):
             if not MoneyBook.objects.filter(
                 id=moneybook_id, user_id=user.id, is_deleted=False
             ).exists():
-                return JsonResponse({"message": "RECORD_NOT_FOUND"})
+                return JsonResponse({"message": "RECORD_NOT_FOUND"}, status=400)
 
             if len(str(data["amount"])) > 15:
                 return JsonResponse({"message": "TOO_MUCH_AMOUNT"}, status=400)
@@ -203,7 +203,7 @@ class DetailMoneyBookView(View):
         if not MoneyBook.objects.filter(
             id=moneybook_id, user_id=user.id, is_deleted=False
         ).exists():
-            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+            return JsonResponse({"message": "RECORD_NOT_FOUND"}, status=400)
 
         moneybook = MoneyBook.objects.get(
             user_id=user.id, id=moneybook_id, is_deleted=False
@@ -223,7 +223,7 @@ class RestoreMoneyBookView(View):
         if not MoneyBook.objects.filter(
             id=moneybook_id, user_id=user.id, is_deleted=True
         ).exists():
-            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+            return JsonResponse({"message": "RECORD_NOT_FOUND"}, status=400)
 
         moneybook = MoneyBook.objects.get(
             user_id=user.id, id=moneybook_id, is_deleted=True
