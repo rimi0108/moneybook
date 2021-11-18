@@ -6,7 +6,7 @@ from django.test import TestCase, Client
 from django.db.models import Sum
 
 from moneybooks.models import MoneyBook
-from users.models import User
+from users.models import User, Token
 from my_settings import SECRET_KEY, ALGORITHM
 
 
@@ -14,6 +14,8 @@ class CreateMoneyBookTest(TestCase):
     def setUp(self):
         user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
         self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        Token.objects.create(token=self.token, user_id=user.id)
 
         MoneyBook.objects.bulk_create(
             [
@@ -141,6 +143,8 @@ class MoneyBookListTest(TestCase):
     def setUp(self):
         user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
         self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        Token.objects.create(token=self.token, user_id=user.id)
 
         MoneyBook.objects.bulk_create(
             [
@@ -317,6 +321,8 @@ class UpdateMoneyBookTest(TestCase):
         user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
         self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
 
+        Token.objects.create(token=self.token, user_id=user.id)
+
         MoneyBook.objects.bulk_create(
             [
                 MoneyBook(
@@ -414,6 +420,8 @@ class DeleteMoneyBookTest(TestCase):
     def setUp(self):
         user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
         self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        Token.objects.create(token=self.token, user_id=user.id)
 
         MoneyBook.objects.bulk_create(
             [

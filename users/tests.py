@@ -2,7 +2,7 @@ import bcrypt, jwt
 
 from django.test import TestCase, Client
 
-from users.models import User
+from users.models import User, Token
 from my_settings import SECRET_KEY, ALGORITHM
 
 
@@ -107,3 +107,30 @@ class LogInTest(TestCase):
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {"message": "KEY_ERROR"})
+
+
+class LogoutTest(TestCase):
+    def setUp(self):
+        user = User.objects.create(
+            email="user1@gmail.com",
+            password=bcrypt.hashpw(
+                "abcd1234!".encode("utf-8"), bcrypt.gensalt()
+            ).decode(),
+        )
+
+        self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        Token.objects.create(token=self.token, user_id=user.id)
+
+    def tearDown(self):
+        User.objects.all().delete()
+
+    def test_log_out_success(self):
+        client = Client()
+
+        header = {"HTTP_Authorization": self.token}
+
+        response = client.post("/users/logout", **header)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"message": "LOGOUT_SUCCESS"})
