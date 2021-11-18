@@ -54,22 +54,32 @@ class MoneyBookView(View):
         # 들어온 쿼리 파라미터에 따라 결과 list 필터링
         if year != None and month != None and day != None:
             all_records = MoneyBook.objects.filter(
-                user_id=user.id, date__year=year, date__month=month, date__day=day
+                user_id=user.id,
+                date__year=year,
+                date__month=month,
+                date__day=day,
+                is_deleted=False,
             )
 
         elif year != None and month != None:
             all_records = MoneyBook.objects.filter(
-                user_id=user.id, date__year=year, date__month=month
+                user_id=user.id,
+                date__year=year,
+                date__month=month,
+                is_deleted=False,
             )
 
         elif year != None:
-            all_records = MoneyBook.objects.filter(user_id=user.id, date__year=year)
+            all_records = MoneyBook.objects.filter(
+                user_id=user.id, date__year=year, is_deleted=False
+            )
 
         elif month != None:
             all_records = MoneyBook.objects.filter(
                 user_id=user.id,
                 date__year=now.strftime("%Y"),
                 date__month=month,
+                is_deleted=False,
             )
 
         elif day != None:
@@ -78,12 +88,13 @@ class MoneyBookView(View):
                 date__year=now.strftime("%Y"),
                 date__month=now.strftime("%m"),
                 date__day=day,
+                is_deleted=False,
             )
 
         else:
             # 쿼리 파라미터 들어오지 않았을 때 현재 날짜의 기록 반환
             all_records = MoneyBook.objects.filter(
-                user_id=user.id, date=now.strftime("%Y-%m-%d")
+                user_id=user.id, date=now.strftime("%Y-%m-%d"), is_deleted=False
             )
 
         # 월별 총 입금 금액과 출금 금액 계산
@@ -126,10 +137,14 @@ class DetailMoneyBookView(View):
     def get(self, request, moneybook_id):
         user = request.user
 
-        if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+        if not MoneyBook.objects.filter(
+            id=moneybook_id, user_id=user.id, is_deleted=False
+        ).exists():
             return JsonResponse({"message": "RECORD_NOT_FOUND"})
 
-        record = MoneyBook.objects.get(id=moneybook_id, user_id=user.id)
+        record = MoneyBook.objects.get(
+            id=moneybook_id, user_id=user.id, is_deleted=False
+        )
 
         result = {
             "amount": format(record.amount, ","),
@@ -149,7 +164,9 @@ class DetailMoneyBookView(View):
 
             data = json.loads(request.body)
 
-            if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+            if not MoneyBook.objects.filter(
+                id=moneybook_id, user_id=user.id, is_deleted=False
+            ).exists():
                 return JsonResponse({"message": "RECORD_NOT_FOUND"})
 
             if len(str(data["amount"])) > 15:
@@ -161,7 +178,9 @@ class DetailMoneyBookView(View):
             category = data["category"]
             type = data["type"]
 
-            MoneyBook.objects.filter(user_id=user.id, id=moneybook_id).update(
+            MoneyBook.objects.filter(
+                user_id=user.id, id=moneybook_id, is_deleted=False
+            ).update(
                 memo=memo,
                 amount=amount,
                 property=property,
@@ -181,9 +200,36 @@ class DetailMoneyBookView(View):
     def delete(self, request, moneybook_id):
         user = request.user
 
-        if not MoneyBook.objects.filter(id=moneybook_id, user_id=user.id).exists():
+        if not MoneyBook.objects.filter(
+            id=moneybook_id, user_id=user.id, is_deleted=False
+        ).exists():
             return JsonResponse({"message": "RECORD_NOT_FOUND"})
 
-        MoneyBook.objects.get(user_id=user.id, id=moneybook_id).delete()
+        moneybook = MoneyBook.objects.get(
+            user_id=user.id, id=moneybook_id, is_deleted=False
+        )
 
-        return JsonResponse({"message": "DELETE_SUCCESS"}, status=200)
+        moneybook.is_deleted = True
+        moneybook.save()
+
+        return JsonResponse({"message": "DELETE_SUCCESS"}, status=201)
+
+
+class RestoreMoneyBookView(View):
+    @log_in_confirm
+    def post(self, request, moneybook_id):
+        user = request.user
+
+        if not MoneyBook.objects.filter(
+            id=moneybook_id, user_id=user.id, is_deleted=True
+        ).exists():
+            return JsonResponse({"message": "RECORD_NOT_FOUND"})
+
+        moneybook = MoneyBook.objects.get(
+            user_id=user.id, id=moneybook_id, is_deleted=True
+        )
+
+        moneybook.is_deleted = False
+        moneybook.save()
+
+        return JsonResponse({"message": "RESTORE_SUCCESS"}, status=201)

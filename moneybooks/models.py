@@ -11,6 +11,7 @@ class MoneyBook(models.Model):
     property = models.CharField(max_length=30)
     category = models.CharField(max_length=30)
     memo = models.CharField(max_length=200, null=True)
+    is_deleted = models.BooleanField(default=False)
 
     class Meta:
         db_table = "moneybooks"
