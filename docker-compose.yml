@@ -4,6 +4,7 @@ services:
   db:
     image: mysql:5.7
     container_name: mysql
+    build: ./
     volumes:
       - ./:/code
     restart: always
