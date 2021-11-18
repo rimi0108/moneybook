@@ -212,7 +212,7 @@ class DetailMoneyBookView(View):
         moneybook.is_deleted = True
         moneybook.save()
 
-        return JsonResponse({"message": "DELETE_SUCCESS"}, status=201)
+        return JsonResponse({"message": "DELETE_SUCCESS"}, status=200)
 
 
 class RestoreMoneyBookView(View):
@@ -232,4 +232,4 @@ class RestoreMoneyBookView(View):
         moneybook.is_deleted = False
         moneybook.save()
 
-        return JsonResponse({"message": "RESTORE_SUCCESS"}, status=201)
+        return JsonResponse({"message": "RESTORE_SUCCESS"}, status=200)
