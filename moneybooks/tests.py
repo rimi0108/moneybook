@@ -488,7 +488,90 @@ class DeleteMoneyBookTest(TestCase):
 
         response = client.delete("/moneybook/100", **header)
 
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {"message": "RECORD_NOT_FOUND"},
+        )
+
+
+class RestoreMoneyBookTest(TestCase):
+    def setUp(self):
+        user = User.objects.create(id=1, email="user1@gmail.com", password="abcd1234!")
+        self.token = jwt.encode({"id": user.id}, SECRET_KEY, algorithm=ALGORITHM)
+
+        Token.objects.create(token=self.token, user_id=user.id)
+
+        MoneyBook.objects.bulk_create(
+            [
+                MoneyBook(
+                    id=1,
+                    user_id=user.id,
+                    amount=10000,
+                    type="WITHDRAW",
+                    date="2021-09-16",
+                    property="현금",
+                    category="식비",
+                    memo="오늘도 돈 썼네..",
+                    is_deleted=True,
+                ),
+                MoneyBook(
+                    id=2,
+                    user_id=user.id,
+                    amount=10000,
+                    type="WITHDRAW",
+                    date="2021-10-16",
+                    property="현금",
+                    category="식비",
+                    memo="오늘도 돈 썼네..",
+                    is_deleted=False,
+                ),
+                MoneyBook(
+                    id=3,
+                    user_id=user.id,
+                    amount=10000,
+                    type="WITHDRAW",
+                    date="2021-11-16",
+                    property="현금",
+                    category="식비",
+                    memo="오늘도 돈 썼네..",
+                    is_deleted=False,
+                ),
+                MoneyBook(
+                    id=4,
+                    user_id=user.id,
+                    amount=10000,
+                    type="WITHDRAW",
+                    date="2021-11-17",
+                    property="현금",
+                    category="식비",
+                    memo="오늘도 돈 썼네..",
+                    is_deleted=False,
+                ),
+            ]
+        )
+
+    def test_restore_moneybook_success(self):
+        client = Client()
+
+        header = {"HTTP_Authorization": self.token}
+
+        response = client.post("/moneybook/restore/1", **header)
+
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"message": "RESTORE_SUCCESS"},
+        )
+
+    def test_restore_moneybook_fail(self):
+        client = Client()
+
+        header = {"HTTP_Authorization": self.token}
+
+        response = client.post("/moneybook/restore/2", **header)
+
+        self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.json(),
             {"message": "RECORD_NOT_FOUND"},
