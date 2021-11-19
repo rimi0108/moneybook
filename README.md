@@ -44,7 +44,7 @@
 - 유저는 자신이 삭제한 가계부를 다시 복원할 수 있습니다.
   - 유저가 가계부를 복원할 시 해당 가계부의 is_deleted 필드가 False로 변하며 사용자는 다시 해당 가계부를 조회, 변경할 수 있게 됩니다.
 
-## 👀 설치 및 실행 방법
+## 👀 Local 실행 방법
 
 1. 터미널을 이용하여 원하는 폴더에 들어가서 밑 명령어를 입력합니다.
 
@@ -55,7 +55,7 @@ git clone https://github.com/rimi0108/moneybook.git .
 2. Docker 파일이 있는 위치에서 밑 명령어를 입력해 Docker 환경을 실행합니다.
 
 ```
-docker-compose up
+docker-compose up --build
 ```
 
 3. 서버 실행을 확인합니다.
@@ -64,6 +64,20 @@ docker-compose up
 django  | Starting development server at http://0.0.0.0:8000/
 django  | Quit the server with CONTROL-C.
 ```
+
+4. [Postman Docs](https://documenter.getpostman.com/view/16843855/UVCCeiac) 에 접속하여서 
+
+<img width="266" alt="스크린샷 2021-11-19 오후 6 54 50" src="https://user-images.githubusercontent.com/73830753/142603983-19bd6606-5b51-4791-bf2a-213852157d39.png">
+
+우측 상단에 `Run in Postman` 버튼을 누르고 로그인 후 사용할 워크스페이스를 고릅니다.
+
+<img width="269" alt="스크린샷 2021-11-19 오후 6 56 10" src="https://user-images.githubusercontent.com/73830753/142603629-0c9d5756-f7b0-4a11-a126-8fc55b6414ef.png">
+
+
+<img width="265" alt="스크린샷 2021-11-19 오후 6 56 15" src="https://user-images.githubusercontent.com/73830753/142603640-f7e8d848-7d74-4e8c-8805-902cb97213cd.png">
+
+포스트맨 환경을 No Environment에서 Local로 변경하고 통신을 시작합니다.
+
 
 ### unit test 실행법
 
@@ -88,6 +102,6 @@ Destroying test database for alias 'default'...
 
 위 화면은 test 성공 시 나오는 화면입니다.
 
-## Postman Docs
+## 🚀 Postman Docs
 
 https://documenter.getpostman.com/view/16843855/UVCCeiac
