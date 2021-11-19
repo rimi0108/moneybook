@@ -78,6 +78,37 @@ django  | Quit the server with CONTROL-C.
 
 포스트맨 환경을 No Environment에서 Local로 변경하고 통신을 시작합니다.
 
+❗ mysql 한글 인코딩 에러 시
+
+<img width="617" alt="스크린샷 2021-11-19 오후 8 49 48" src="https://user-images.githubusercontent.com/73830753/142618734-5531a954-6500-45ff-9439-db8573ab522f.png">
+
+```
+apt-get update
+```
+```
+apt-get install vim
+```
+```
+vim /etc/mysql/my.cnf
+```
+위 세가지 명령어를 mysql 컨테이너에서 실행합니다.
+```
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+collation-server = utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server = utf8
+```
+my.cnf 파일에 위 코드를 추가합니다.
+
+<img width="694" alt="스크린샷 2021-11-19 오후 9 01 41" src="https://user-images.githubusercontent.com/73830753/142619710-250c4d21-987f-4021-af25-9d7ceee57409.png">
+
+정상적으로 한글이 뜨는 것을 확인하실 수 있습니다.
 
 ### unit test 실행법
 
