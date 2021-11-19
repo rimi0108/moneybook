@@ -112,7 +112,7 @@ mysql> GRANT ALL PRIVILEGES ON test_django.* TO 'django'@'%';
 ```
 mysql> FLUSH PRIVILEGES;
 ```
-위 명령어를 입력합니다.
+위 명령어를 입력해주세요.
 
 ## 🚀 Postman Docs
 
